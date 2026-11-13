@@ -147,9 +147,56 @@
     return button
   }
 
+  // ---- collapsed groups -----------------------------------------------------------------------
+
+  // Groups the person folded, by `kind:key` (a status or a worktree), kept in this panel's own
+  // storage so they stay folded across reloads. Storage may be missing or throw: then folding
+  // still works, it is just forgotten.
+  var COLLAPSED_KEY = 'agent-roster.collapsed'
+  var collapsed = (function () {
+    try {
+      var list = JSON.parse(window.localStorage.getItem(COLLAPSED_KEY) || '[]')
+      return Array.isArray(list) ? list.filter(function (k) { return typeof k === 'string' }) : []
+    } catch (e) {
+      return []
+    }
+  })()
+
+  function groupId(group) {
+    return group.kind + ':' + group.key
+  }
+
+  function toggleGroup(id) {
+    var at = collapsed.indexOf(id)
+    if (at >= 0) collapsed.splice(at, 1)
+    else collapsed.push(id)
+    try {
+      window.localStorage.setItem(COLLAPSED_KEY, JSON.stringify(collapsed))
+    } catch (e) {
+      // not kept, still folded for now
+    }
+    render()
+    var heads = els.list.querySelectorAll('.group-head')
+    for (var i = 0; i < heads.length; i++) {
+      if (heads[i].getAttribute('data-group') === id) heads[i].focus({ preventScroll: true })
+    }
+  }
+
+  var CHEVRON = '<svg viewBox="0 0 16 16" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4l4 4-4 4"/></svg>'
+
   function renderGroup(group, byKey, mode, now, cursor) {
     var section = make('section', 'group')
-    var head = make('div', 'group-head')
+    var id = groupId(group)
+    var folded = collapsed.indexOf(id) >= 0
+    if (folded) section.classList.add('is-collapsed')
+    var head = make('button', 'group-head')
+    head.type = 'button'
+    head.setAttribute('data-group', id)
+    head.setAttribute('aria-expanded', String(!folded))
+    head.title = folded ? 'Show these agents' : 'Hide these agents'
+    var chevron = make('span', 'chevron')
+    chevron.innerHTML = CHEVRON // static markup
+    head.appendChild(chevron)
     head.appendChild(make('h2', 'group-name', group.label))
     head.appendChild(make('span', 'badge', String(group.paneKeys.length)))
     if (group.kind === 'worktree') {
@@ -157,6 +204,7 @@
       if (group.subtitle) head.appendChild(make('span', 'group-sub', group.subtitle))
     }
     section.appendChild(head)
+    if (folded) return section // a folded group keeps its count, but draws no rows
     var list = make('ul', 'rows')
     for (var i = 0; i < group.paneKeys.length; i++) {
       var row = byKey[group.paneKeys[i]]
@@ -386,6 +434,11 @@
 
     els.list.addEventListener('click', function (event) {
       var target = event.target
+      var toggle = target && target.closest ? target.closest('.group-head') : null
+      if (toggle) {
+        toggleGroup(toggle.getAttribute('data-group'))
+        return
+      }
       var button = target && target.closest ? target.closest('.row') : null
       if (button) focusRow(button.getAttribute('data-pane'))
     })
