@@ -1,0 +1,15 @@
+{
+  "name": "orca-agent-roster",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Agent Roster, a plugin for the Orca desktop IDE. No runtime dependencies; this file only carries the test scripts.",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test test/model.test.ts test/cycle.test.ts test/poller.test.ts test/worker.test.ts test/handle-resolution.test.ts test/resolve.test.ts test/cli.test.ts test/panel.test.ts test/manifest.test.ts",
+    "test:orca": "orca plugin test .",
+    "validate": "orca plugin validate .",
+    "smoke": "node test/smoke-live.mjs",
+    "typecheck": "tsc -p tsconfig.json"
+  }
+}

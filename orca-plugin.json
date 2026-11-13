@@ -1,0 +1,106 @@
+{
+  "$schema": "https://raw.githubusercontent.com/stablyai/orca/main/docs/schemas/plugins/orca-plugin.v2.schema.json",
+  "manifestVersion": 2,
+  "id": "agent-roster",
+  "name": "Agent Roster",
+  "version": "0.1.0",
+  "description": "Orca's Activity view in its own sidebar pane, with real session titles and shortcuts to cycle between agents.",
+  "author": {
+    "name": "balakumardev",
+    "url": "https://github.com/balakumardev"
+  },
+  "repository": "https://github.com/balakumardev/orca-agent-roster",
+  "homepage": "https://github.com/balakumardev/orca-agent-roster",
+  "license": "MIT",
+  "icon": "icon.png",
+  "screenshots": [
+    {
+      "path": "screenshots/status-dark.png",
+      "alt": "The Agent Roster panel grouped by status, in a dark theme, listing seven sample agents with their session titles.",
+      "caption": "Every running agent grouped by status, with the real session title.",
+      "theme": "dark"
+    },
+    {
+      "path": "screenshots/worktree-light.png",
+      "alt": "The Agent Roster panel grouped by worktree, in a light theme, with every agent of each worktree visible and one row highlighted as the shortcut cursor.",
+      "caption": "Group by worktree: nothing is folded away, and the highlighted row is where the shortcuts continue from.",
+      "theme": "light"
+    }
+  ],
+  "engines": {
+    "orca": ">=1.4.258"
+  },
+  "execution": "trusted-worker",
+  "pluginApi": 1,
+  "main": "src/worker.ts",
+  "capabilities": [
+    { "kind": "agent:read" },
+    { "kind": "workspace:read" },
+    { "kind": "settings:own" }
+  ],
+  "contributes": {
+    "panels": [
+      {
+        "id": "roster",
+        "title": "Agent Roster",
+        "icon": "agent",
+        "entry": "panel/index.html",
+        "ui": "html"
+      }
+    ],
+    "commands": [
+      { "id": "agent-roster.prev", "title": "Agent Roster: Previous agent", "when": "global" },
+      { "id": "agent-roster.next", "title": "Agent Roster: Next agent", "when": "global" }
+    ],
+    "keybindings": [
+      { "command": "agent-roster.prev", "key": "Mod+Shift+Semicolon", "when": "global" },
+      { "command": "agent-roster.next", "key": "Mod+Shift+Quote", "when": "global" }
+    ],
+    "events": [
+      { "on": "agent.status.changed" },
+      { "on": "workspace.changed" }
+    ],
+    "statusBarItems": [
+      {
+        "id": "summary",
+        "icon": "agent",
+        "text": "Agents",
+        "tooltip": "Agent Roster"
+      }
+    ],
+    "settings": [
+      {
+        "key": "groupBy",
+        "title": "Group by",
+        "description": "How the Agent Roster panel groups agents: by status (like Orca's Activity view) or under their worktree.",
+        "type": "string",
+        "default": "status",
+        "enum": ["status", "worktree"],
+        "enumLabels": ["Status", "Worktree"]
+      },
+      {
+        "key": "cycleOrder",
+        "title": "Shortcut order",
+        "description": "The order the next and previous shortcuts walk: the panel's status order, or worktree by worktree so repeated presses visit every agent of a worktree.",
+        "type": "string",
+        "default": "activity",
+        "enum": ["activity", "projects"],
+        "enumLabels": ["Activity (panel order)", "Projects (worktree, then agent)"]
+      },
+      {
+        "key": "skipFinished",
+        "title": "Skip finished agents when cycling",
+        "description": "The shortcuts pass over agents that are done, idle, interrupted or failed.",
+        "type": "boolean",
+        "default": false
+      },
+      {
+        "key": "showChildAgents",
+        "title": "Show child agents",
+        "description": "Also show the finished sub-agents Orca folds away under their coordinator. Running sub-agents are always listed, as in the Activity view.",
+        "type": "boolean",
+        "default": false
+      }
+    ]
+  }
+}

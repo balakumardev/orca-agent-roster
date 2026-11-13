@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#243247"/>
+      <stop offset="1" stop-color="#0b1220"/>
+    </linearGradient>
+  </defs>
+  <rect x="8" y="8" width="240" height="240" rx="56" fill="url(#bg)"/>
+  <rect x="8.5" y="8.5" width="239" height="239" rx="55.5" fill="none" stroke="#ffffff" stroke-opacity="0.10"/>
+
+  <!-- row 1: waiting for input -->
+  <rect x="34" y="48" width="188" height="48" rx="15" fill="#ffffff" fill-opacity="0.06"/>
+  <circle cx="62" cy="72" r="11" fill="none" stroke="#fb923c" stroke-width="4"/>
+  <path d="M58.6 68.4a3.6 3.6 0 1 1 5 3.3c-1.1.6-1.6 1.2-1.6 2.3" fill="none" stroke="#fb923c" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="62" cy="79.2" r="1.7" fill="#fb923c"/>
+  <rect x="86" y="62" width="92" height="9" rx="4.5" fill="#e2e8f0" fill-opacity="0.92"/>
+  <rect x="86" y="77" width="58" height="7" rx="3.5" fill="#94a3b8" fill-opacity="0.65"/>
+  <rect x="190" y="68" width="20" height="7" rx="3.5" fill="#94a3b8" fill-opacity="0.45"/>
+
+  <!-- row 2: working, the cursor row -->
+  <rect x="34" y="104" width="188" height="48" rx="15" fill="#38bdf8" fill-opacity="0.20"/>
+  <rect x="34" y="112" width="5" height="32" rx="2.5" fill="#38bdf8"/>
+  <circle cx="62" cy="128" r="11" fill="none" stroke="#facc15" stroke-opacity="0.28" stroke-width="4"/>
+  <path d="M62 117a11 11 0 0 1 11 11" fill="none" stroke="#facc15" stroke-width="4" stroke-linecap="round"/>
+  <rect x="86" y="118" width="104" height="9" rx="4.5" fill="#f1f5f9"/>
+  <rect x="86" y="133" width="70" height="7" rx="3.5" fill="#94a3b8" fill-opacity="0.65"/>
+  <rect x="190" y="124" width="20" height="7" rx="3.5" fill="#94a3b8" fill-opacity="0.45"/>
+
+  <!-- row 3: done -->
+  <rect x="34" y="160" width="188" height="48" rx="15" fill="#ffffff" fill-opacity="0.06"/>
+  <circle cx="62" cy="184" r="11" fill="none" stroke="#34d399" stroke-width="4"/>
+  <path d="M56.6 184.4l4.1 4.1 7.2-7.8" fill="none" stroke="#34d399" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="86" y="174" width="84" height="9" rx="4.5" fill="#e2e8f0" fill-opacity="0.92"/>
+  <rect x="86" y="189" width="52" height="7" rx="3.5" fill="#94a3b8" fill-opacity="0.65"/>
+  <rect x="190" y="180" width="20" height="7" rx="3.5" fill="#94a3b8" fill-opacity="0.45"/>
+</svg>
