@@ -300,7 +300,7 @@ export interface Page {
   groups(): Array<{ name: string; badge: string; pill: boolean; sub: string }>
 }
 
-export function openPanel(opts: { html: string; js: string; clock: ReturnType<typeof fakeClock>; withBridge?: boolean }): Page {
+export function openPanel(opts: { html: string; js: string; clock: ReturnType<typeof fakeClock>; withBridge?: boolean; storage?: Map<string, string> }): Page {
   const doc = parseHtml(opts.html)
   const bridge = fakeBridge()
   const net: string[] = []
@@ -328,6 +328,10 @@ export function openPanel(opts: { html: string; js: string; clock: ReturnType<ty
     WebSocket: refuse('WebSocket'),
     EventSource: refuse('EventSource'),
     navigator: { sendBeacon: refuse('sendBeacon') }
+  }
+  if (opts.storage) {
+    const storage = opts.storage
+    sandbox.localStorage = { getItem: (k: string) => storage.get(k) ?? null, setItem: (k: string, v: string) => void storage.set(k, String(v)) }
   }
   sandbox.window = sandbox
   if (opts.withBridge !== false) sandbox.orca = { plugin: bridge.plugin }

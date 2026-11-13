@@ -10,9 +10,10 @@ Agent Roster is a plugin for the [Orca](https://github.com/stablyai/orca) deskto
 
 - A right-sidebar panel with one row per running agent: status glyph, session title, `worktree / branch`, agent type and the time since its last update. Click a row to switch to that agent's terminal.
 - The same status model and ordering as the Activity view: needs-you first, then working, then finished. See [Status legend](#status-legend).
-- A **Group by** switch in the panel header: **Status** (default) or **Worktree**. In Worktree mode every group is always expanded and lists every visible agent of its worktree (finished sub-agents that Orca folds away stay hidden unless `showChildAgents` is on), and the worktree you are in carries a "current" pill.
+- A **Group by** switch in the panel header: **Status** (default) or **Worktree**. In Worktree mode every group lists every visible agent of its worktree (finished sub-agents that Orca folds away stay hidden unless `showChildAgents` is on), and the worktree you are in carries a "current" pill.
 
   ![The panel grouped by worktree, light theme](screenshots/worktree-light.png)
+- Every group folds and unfolds from its header (a chevron shows which), in both modes: fold **Done** to keep finished agents out of the way, or a worktree you are not watching. A folded group keeps its count, and the panel remembers what you folded.
 - Two global shortcuts, previous and next agent, that call `orca terminal switch` for you. The row the shortcuts will continue from is highlighted in the panel.
 - A small status-bar summary such as `2 working · 1 waiting`. It is hidden while no agent is running.
 - A roster too large for one panel update (several hundred agents) is cut to its first rows, and the panel says "Showing N of M agents". The shortcuts still walk every agent.
@@ -119,7 +120,7 @@ Every source goes through the same checks. A title that is only the name of the 
 
 ## Privacy
 
-Everything stays on your machine. The plugin runs two read-only commands, `orca worktree ps --json` and `orca terminal list --json` (the second one again when you press a shortcut or click a row, and once more shortly after a refresh that leaves an agent without a terminal), and `orca terminal switch --terminal <handle>` when you press a shortcut or click a row. It makes no network requests, has no telemetry, and writes no files of its own; its four settings live in Orca's own settings store. The plugin log holds counts, timings and error reasons, and for a failed terminal lookup the first 8 characters of the pane's tab and leaf ids; the plugin's own log lines contain no session titles, prompts or terminal handles (titles are shown in the panel only).
+Everything stays on your machine. The plugin runs two read-only commands, `orca worktree ps --json` and `orca terminal list --json` (the second one again when you press a shortcut or click a row, and once more shortly after a refresh that leaves an agent without a terminal), and `orca terminal switch --terminal <handle>` when you press a shortcut or click a row. It makes no network requests, has no telemetry, and writes no files of its own; its four settings live in Orca's own settings store, and the groups you folded in the panel's own browser storage. The plugin log holds counts, timings and error reasons, and for a failed terminal lookup the first 8 characters of the pane's tab and leaf ids; the plugin's own log lines contain no session titles, prompts or terminal handles (titles are shown in the panel only).
 
 This is a `trusted-worker` plugin: its code runs in a separate Node.js process with your user account's access, which Orca tells you at install time. It asks for three capabilities: `agent:read` (agent status events), `workspace:read` (the focused workspace and its terminals) and `settings:own` (its own four settings).
 
