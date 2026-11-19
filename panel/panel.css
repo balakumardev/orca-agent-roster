@@ -169,10 +169,38 @@ button:focus-visible {
 
 .group-head {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 6px;
+  width: 100%;
   padding: 10px 10px 4px;
   min-width: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.group-head:hover .group-name {
+  text-decoration: underline;
+  text-decoration-color: var(--orca-muted-foreground, #9a9aa2);
+}
+
+.chevron {
+  display: inline-flex;
+  flex: none;
+  color: var(--orca-muted-foreground, #9a9aa2);
+  transform: rotate(90deg);
+  transition: transform 0.12s ease;
+}
+
+.group.is-collapsed .chevron {
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chevron {
+    transition: none;
+  }
 }
 
 .group-name {

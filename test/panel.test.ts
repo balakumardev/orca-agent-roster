@@ -107,8 +107,8 @@ function sampleModel(over: { cursor?: string | null; groupBy?: 'status' | 'workt
 }
 
 /** Opens the panel and answers its first roster.list with `model`. */
-async function open(model: RosterModel | null = sampleModel()): Promise<Page> {
-  const page = openPanel({ html, js, clock: fakeClock(NOW) })
+async function open(model: RosterModel | null = sampleModel(), storage?: Map<string, string>): Promise<Page> {
+  const page = openPanel({ html, js, clock: fakeClock(NOW), storage })
   assert.equal(page.bridge.calls[0]?.name, 'roster.list', 'the panel asks for the model first')
   if (model) {
     page.bridge.calls[0]!.resolve(model)
@@ -338,4 +338,30 @@ test('panel: outside Orca it explains itself, and across every interaction it ne
   page.clock.tick(60_000)
   await tick()
   assert.deepEqual(page.net, [])
+})
+
+const head = (page: Page, name: string) => page.list.querySelectorAll('.group-head').find((h) => h.querySelector('.group-name')?.textContent === name)!
+
+test('panel: a status group folds and unfolds from its header, keeping its count, and stays folded across a reload', async () => {
+  const storage = new Map<string, string>()
+  const page = await open(sampleModel(), storage)
+  assert.equal(head(page, 'Done').getAttribute('aria-expanded'), 'true')
+  head(page, 'Done').dispatch('click')
+  assert.deepEqual(page.rows().map((r) => r.paneKey), ['a1:l', 'b2:l', 'a2:l'], 'the done row is hidden')
+  assert.deepEqual(page.groups().map((g) => [g.name, g.badge]), [['Waiting for input', '1'], ['Working', '2'], ['Done', '1']], 'the folded group keeps its count')
+  assert.equal(head(page, 'Done').getAttribute('aria-expanded'), 'false')
+  assert.equal(page.doc.activeElement, head(page, 'Done'), 'focus stays on the header')
+  assert.equal(page.bridge.last('roster.focus'), undefined, 'folding never switches terminals')
+
+  const reloaded = await open(sampleModel(), storage)
+  assert.deepEqual(reloaded.rows().map((r) => r.paneKey), ['a1:l', 'b2:l', 'a2:l'], 'still folded after a reload')
+  head(reloaded, 'Done').dispatch('click')
+  assert.deepEqual(reloaded.rows().map((r) => r.paneKey), ['a1:l', 'b2:l', 'a2:l', 'b1:l'], 'unfolded again')
+})
+
+test('panel: worktree groups fold on their own, apart from status groups, and folding works without storage', async () => {
+  const page = await open(sampleModel({ groupBy: 'worktree' }))
+  head(page, 'beta').dispatch('click')
+  assert.deepEqual(page.rows().map((r) => r.paneKey), ['a1:l', 'a2:l'])
+  assert.equal(head(page, 'alpha').getAttribute('aria-expanded'), 'true')
 })
